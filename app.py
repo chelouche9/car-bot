@@ -135,10 +135,15 @@ if prompt := st.chat_input("הקלד את השאלה שלך כאן..."):
             
             # Stream the response from the agent
             with st.spinner("מחפש את המידע הטוב ביותר עבורך..."):
+                # Prepare all messages for the agent (entire conversation history)
+                all_messages = []
+                for msg in st.session_state.messages:
+                    all_messages.append({"role": msg["role"], "content": msg["content"]})
+                
                 # Invoke the agent with streaming - use dict format per LangChain docs
                 event_count = 0
                 for event in graph.stream(
-                    {"messages": [{"role": "user", "content": prompt}]},
+                    {"messages": all_messages},
                     config=config,
                     stream_mode="values"
                 ):
